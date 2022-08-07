@@ -1,4 +1,5 @@
 print("necesito arreglar el pandas")
+print("Psoiblemente una reiniciada")
 import os
 import base64
 import pandas as pd
