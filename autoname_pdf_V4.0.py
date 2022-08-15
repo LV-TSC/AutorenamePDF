@@ -82,7 +82,15 @@ os.remove(tempFile)
 miFrame=Frame(root)
 miFrame.pack()
 
-folder = filedialog.askdirectory()
+var_folder=StringVar()
+folder = os.path.abspath(os.getcwd())
+var_folder.set(folder)
+
+def folderdir():
+    global folder
+    folder = filedialog.askdirectory()
+    var_folder.set(folder)
+
 extensions = ('.pdf','.PDF','.docx','.DOCX','.png','.jpg')
 
 from pathlib import Path
@@ -228,18 +236,18 @@ def autonameNUEVOLAPTOP():
         messagebox.showerror("Error","No se encuentra el Número de Laptop " + str(filepath))
 
 #------------LABELS-----------#
-mesagelabel=Label(miFrame, text="¿COMO DESEA BUSCAR LOS ARCHIVOS?")
+mesagelabel=Label(miFrame, text="SELECCIONE LA CARPETA Y LUEGO BUSQUE POR NOMBRE DEL ARCHIVO")
 mesagelabel.grid(row=0, column=1, padx=5, pady=5, sticky="nswe", columnspan=3)
 
 #----------FOLDER-------------#
 miFrame2=Frame(root)
 miFrame2.pack()
 
-selectbutton=Button(miFrame2, width=11, text="Carpeta",command=autonameDNI)
+selectbutton=Button(miFrame2, width=11, text="CARPETA",command=folderdir)
 selectbutton.grid(row=0,column=0, sticky="e", padx=5, pady=5)
 
-selectbutton=input(miFrame2, width=11, text="Carpeta",command=autonameDNI)
-selectbutton.grid(row=0,column=1, sticky="e", padx=5, pady=5)
+selectbuttonentry=Entry(miFrame2, width=40, textvariable=var_folder, state='disabled')
+selectbuttonentry.grid(row=0, column=1, padx=5, pady=5)
 
 #---------BOTONES----------#
 miFrame3=Frame(root)
