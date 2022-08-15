@@ -4,6 +4,7 @@ import pandas as pd
 import warnings
 from tkinter import *
 from tkinter import messagebox
+from tkinter import filedialog
 icon = \
 """
 AAABAAEAAAAAAAEAIABbHQAAFgAAAIlQTkcNChoKAAAADUlIRFIAAAEAAAABAAgGAAAAXHKoZgAAAAFvck5UAc+id5oAAB0VSURBVHja7Z1pcFRV2scpq/zgO18sa77MJ6v8PKWf5sv7oqMO+w5JIAkQIEDYd0FH2RxlU5FFdHAZUESURRFE
@@ -72,7 +73,7 @@ iconfile.close()
 
 root=Tk()
 root.title("RenamePDF")
-root.geometry("400x80")
+root.geometry("400x105")
 root.resizable(False,False)
 
 root.wm_iconbitmap(tempFile)
@@ -81,7 +82,7 @@ os.remove(tempFile)
 miFrame=Frame(root)
 miFrame.pack()
 
-folder = os.path.abspath(os.getcwd())
+folder = filedialog.askdirectory()
 extensions = ('.pdf','.PDF','.docx','.DOCX','.png','.jpg')
 
 from pathlib import Path
@@ -97,7 +98,6 @@ def autonameDNI():
             if x.endswith(extensions):
                 
                 filepath = os.path.splitext(os.path.basename(x))[0]
-                print(filepath)
 
                 if len(filepath) < 10:
                     data = pd.read_excel(fileDB, sheet_name="TB_EMPLEADO")
@@ -122,7 +122,7 @@ def autonameDNI():
         messagebox.showinfo("Aviso","Se renombraron los archivos por DNI")
 
     except Exception as e:
-        messagebox.showerror("Error","No se encuentra el DNI")
+        messagebox.showerror("Error","No se encuentra el DNI " + str(filepath))
 
 def autonameMOVILE():
     try:
@@ -130,7 +130,6 @@ def autonameMOVILE():
             if x.endswith(extensions):
                 
                 filepath = os.path.splitext(os.path.basename(x))[0]
-                print(filepath)
 
                 if len(filepath) < 10:
                     warnings.simplefilter(action='ignore', category=UserWarning)
@@ -157,7 +156,7 @@ def autonameMOVILE():
         messagebox.showinfo("Aviso","Se renombraron los archivos por Número de Teléfono")
 
     except Exception as e:
-        messagebox.showerror("Error","No se encuentra el Número de Telefono")
+        messagebox.showerror("Error","No se encuentra el Número de Telefono " + str(filepath))
 
 def autonameLAPTOP():
     try:
@@ -165,7 +164,6 @@ def autonameLAPTOP():
             if x.endswith(extensions):
                 
                 filepath = os.path.splitext(os.path.basename(x))[0]
-                print(filepath)
 
                 if len(filepath) < 14:
                     warnings.simplefilter(action='ignore', category=UserWarning)
@@ -192,7 +190,7 @@ def autonameLAPTOP():
         messagebox.showinfo("Aviso","Se renombraron los archivos por Número de Laptop")
 
     except Exception as e:
-        messagebox.showerror("Error","No se encuentra el Número de Laptop")
+        messagebox.showerror("Error","No se encuentra el Número de Laptop " + str(filepath))
 
 
 def autonameNUEVOLAPTOP():
@@ -201,7 +199,6 @@ def autonameNUEVOLAPTOP():
             if x.endswith(extensions):
                 
                 filepath = os.path.splitext(os.path.basename(x))[0]
-                print(filepath)
 
                 if len(filepath) < 13:
                     warnings.simplefilter(action='ignore', category=UserWarning)
@@ -228,26 +225,36 @@ def autonameNUEVOLAPTOP():
         messagebox.showinfo("Aviso","Se renombraron los archivos por Nuevo Número de Laptop")
 
     except Exception as e:
-        messagebox.showerror("Error","No se encuentra el Número de Laptop")
+        messagebox.showerror("Error","No se encuentra el Número de Laptop " + str(filepath))
 
 #------------LABELS-----------#
 mesagelabel=Label(miFrame, text="¿COMO DESEA BUSCAR LOS ARCHIVOS?")
 mesagelabel.grid(row=0, column=1, padx=5, pady=5, sticky="nswe", columnspan=3)
 
-#---------BOTONES----------#
+#----------FOLDER-------------#
 miFrame2=Frame(root)
 miFrame2.pack()
 
-searchbutton=Button(miFrame2, width=11, text="N° DNI",command=autonameDNI)
+selectbutton=Button(miFrame2, width=11, text="Carpeta",command=autonameDNI)
+selectbutton.grid(row=0,column=0, sticky="e", padx=5, pady=5)
+
+selectbutton=input(miFrame2, width=11, text="Carpeta",command=autonameDNI)
+selectbutton.grid(row=0,column=1, sticky="e", padx=5, pady=5)
+
+#---------BOTONES----------#
+miFrame3=Frame(root)
+miFrame3.pack()
+
+searchbutton=Button(miFrame3, width=11, text="N° DNI",command=autonameDNI)
 searchbutton.grid(row=0,column=0, sticky="e", padx=5, pady=5)
 
-createbutton=Button(miFrame2, width=11, text="N° CELULAR", command=autonameMOVILE)
+createbutton=Button(miFrame3, width=11, text="N° CELULAR", command=autonameMOVILE)
 createbutton.grid(row=0,column=1, sticky="e", padx=5, pady=5)
 
-createbutton=Button(miFrame2, width=11, text="N° LAPTOP(A)", command=autonameLAPTOP)
+createbutton=Button(miFrame3, width=11, text="N° LAPTOP(A)", command=autonameLAPTOP)
 createbutton.grid(row=0,column=2, sticky="e", padx=5, pady=5)
 
-createbutton=Button(miFrame2, width=11, text="N° LAPTOP(N)", command=autonameNUEVOLAPTOP)
+createbutton=Button(miFrame3, width=11, text="N° LAPTOP(N)", command=autonameNUEVOLAPTOP)
 createbutton.grid(row=0,column=3, sticky="e", padx=5, pady=5)
 
 root.mainloop()
