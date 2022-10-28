@@ -173,41 +173,6 @@ def autonameLAPTOP():
                 
                 filepath = os.path.splitext(os.path.basename(x))[0]
 
-                if len(filepath) < 14:
-                    warnings.simplefilter(action='ignore', category=UserWarning)
-                    data = pd.read_excel(filelaptop,skiprows=1, sheet_name="Inventario - Laptop")
-                    df = pd.DataFrame(data)
-                    laptopnumber = str(filepath)
-                    columnas = ['Host', 'DNI', 'Personal', 'Área', 'Sede', 'SN']
-                    
-                    def buscar():
-                        info = df[df['Host']==laptopnumber]
-                        return(info)
-                    df_seleccionados = buscar()[columnas]
-
-                    for index, row in df_seleccionados.iterrows():
-                        os.rename(folder + '//' + filepath + '.pdf', folder + '//' + str(row['Host'])
-                        + ' - ' + str(int(row['DNI']))
-                        + ' - ' + str.upper((row['Personal']))
-                        + ' - ' + str.upper((row['Área']))
-                        + ' - ' + str.upper((row['Sede']))
-                        + ' - ' + str.upper((row['SN'])) +'.pdf')
-                else:
-                    continue
-
-        messagebox.showinfo("Aviso","Se renombraron los archivos por Número de Laptop")
-
-    except Exception as e:
-        messagebox.showerror("Error","No se encuentra el Número de Laptop " + str(filepath))
-
-
-def autonameNUEVOLAPTOP():
-    try:
-        for x in os.listdir(folder):
-            if x.endswith(extensions):
-                
-                filepath = os.path.splitext(os.path.basename(x))[0]
-
                 if len(filepath) < 13:
                     warnings.simplefilter(action='ignore', category=UserWarning)
                     data = pd.read_excel(filelaptop,skiprows=1, sheet_name="Inventario_General")
@@ -259,10 +224,7 @@ searchbutton.grid(row=0,column=0, sticky="e", padx=5, pady=5)
 createbutton=Button(miFrame3, width=11, text="N° CELULAR", command=autonameMOVILE)
 createbutton.grid(row=0,column=1, sticky="e", padx=5, pady=5)
 
-createbutton=Button(miFrame3, width=11, text="N° LAPTOP(A)", command=autonameLAPTOP)
+createbutton=Button(miFrame3, width=11, text="N° LAPTOP", command=autonameLAPTOP)
 createbutton.grid(row=0,column=2, sticky="e", padx=5, pady=5)
-
-createbutton=Button(miFrame3, width=11, text="N° LAPTOP(N)", command=autonameNUEVOLAPTOP)
-createbutton.grid(row=0,column=3, sticky="e", padx=5, pady=5)
 
 root.mainloop()
