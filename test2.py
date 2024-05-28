@@ -1,52 +1,42 @@
-import os
-import base64
-import pandas as pd
-from tkinter import *
-from tkinter import messagebox
-import warnings
+import pyodbc
 
-folder = ("C:\TSC\Escaner")
-extensions = ('.pdf', '.PDF','.docx', '.jpg')
+server = 'SRVAFL'
+database = 'BDSYSTSC'
+username = 'RPA'
+password = '123qweASD!"#'
+connection_string = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={server};DATABASE={database};UID={username};PWD={password}'
 
-from pathlib import Path
-home_dir = Path.home()
-fileDB = (f'{ home_dir }\\Textile Sourcing Company S.A.C\\Soporte TI - General\\BD\\DB_TI.xlsx')
-filemovile = ('C:\\TSC\\BD\\Inventario_Equipos_Movil.xlsx')
-filelaptop = ('C:\\TSC\\BD\\Inventario_Equipos_Computo.xlsx')
 
-try:
-    for x in os.listdir(folder):
-        if x.endswith(extensions):
-            
-            filepath = os.path.splitext(os.path.basename(x))[0]
+def buscar_datos(valor):
+    try:
+        with pyodbc.connect(connection_string) as conn:
+            with conn.cursor() as cursor:
+                query = '''select codigo_tsc, codigo_trabajador, nombres + ' ' + apellido_materno + ' ' + apellido_materno as 
+                    Nombre_Completo, cargo_descripcion, area_descripcion, centro_costos_descripcion, descripcion_sede, activo_cesado from datos_trabajadores_tsc where codigo_trabajador = ?'''
+                cursor.execute(query, (valor,))
+                rows = cursor.fetchall()
+                resultados = [dict(zip([column[0] for column in cursor.description], row)) for row in rows]
+                return resultados
+    except pyodbc.Error as e:
+        print("Error al conectar a la base de datos o ejecutar la consulta: ", e)
+        return []
 
-            if len(filepath) < 15:
-                print("INICIO")
-                warnings.simplefilter(action='ignore', category=UserWarning)
-                data = pd.read_excel(filelaptop,skiprows=1, sheet_name="Inventario - Laptop")
-                df = pd.DataFrame(data)
-                laptopnumber = str(filepath)
-                columnas = ['Host', 'DNI', 'Personal', 'Área', 'Sede', 'SN']
-                
-                print("BUSCAR")
-                def buscar():
-                    info = df[df['Host']==laptopnumber]
-                    return(info)
+valor_busqueda = '21887600'
+resultados = buscar_datos(valor_busqueda)
 
-                df_seleccionados = buscar()[columnas]
+fila_seleccionada = None
 
-                print("RENOMBRAR")
-                for index, row in df_seleccionados.iterrows():
-                    os.rename(folder + '//' + filepath + '.pdf', folder + '//' + str(row['Host'])
-                    + ' - ' + str(int(row['DNI']))
-                    + ' - ' + str.upper((row['Personal']))
-                    + ' - ' + str.upper((row['Área']))
-                    + ' - ' + str.upper((row['Sede']))
-                    + ' - ' + str.upper((row['SN'])) +'.pdf')
-            else:
-                continue
+for resultado in resultados:
+    if resultado.get('activo_cesado') == 'ACTIVO':
+        fila_seleccionada = resultado
+    else:
+        fila_seleccionada = resultados[0]
 
-    messagebox.showinfo("Aviso","Se termino de renombrar los archivos")
-
-except Exception as e:
-    messagebox.showerror("Error","No se encuentra DNI")
+if fila_seleccionada:
+    nombre_completo = fila_seleccionada.get('Nombre_Completo')
+    codigo_trabajador = fila_seleccionada.get('codigo_trabajador')
+    activo_cesado = fila_seleccionada.get('activo_cesado')
+    SEDE = fila_seleccionada.get('descripcion_sede')
+    print(f"Nombre Completo: {nombre_completo}, {SEDE.rstrip()}, Código Trabajador: {codigo_trabajador} , {activo_cesado}")
+else:
+    print("No se encontraron resultados.")

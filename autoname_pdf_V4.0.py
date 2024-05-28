@@ -87,7 +87,6 @@ folder = os.path.abspath(os.getcwd())
 var_folder.set(folder)
 
 def folderdir():
-    global folder
     folder = filedialog.askdirectory()
     var_folder.set(folder)
 
